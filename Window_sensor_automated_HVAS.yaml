@@ -23,16 +23,18 @@ trigger:
   entity_id: !input window_sensor
   
 action:
-  service: >
-    {% if trigger.to_state.state == "on" %}
+  - if:
+      - condition: state
+        entity_id: !input window_sensor
+        state: "on"
+    then:
       domain: climate
-      entity_id: target_hvac
+      entity_id: !input target_hvac
       type: set_hvac_mode
       hvac_mode: "off"
-    {% else %}
+    else:
       domain: climate
-      entity_id: target_hvac
+      entity_id: !input target_hvac
       type: set_hvac_mode
       hvac_mode: auto
-    {% endif %}
 mode: single
