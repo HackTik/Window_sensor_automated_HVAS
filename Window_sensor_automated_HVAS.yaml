@@ -1,0 +1,40 @@
+blueprint:
+  name: Windows Sensor automated Thermostat
+  description: Turns on and off the thermostat depending on window sensor
+  domain: automation
+  input:
+    window_sensor:
+      name: Window Sensor
+      description: This sensor will be used to turn on/off the thermostat.
+      selector:
+        entity:
+          domain: binary_sensor
+          device_class: window
+    target_hvac:
+      name: Thermostat
+      description: Thermostat to turn on/off.
+      selector:
+        target:
+          entity:
+            domain: climate
+            
+trigger:
+  platform: state
+  entity_id: !input window_sensor
+  
+action:
+  service: >
+    {% if trigger.to_state.state == "on" %}
+      - device_id: 55295eb3abdcf4d4c2a208b40fb8f466
+        domain: climate
+        entity_id: target_hvac
+        type: set_hvac_mode
+        hvac_mode: "off"
+    {% else %}
+      - device_id: 55295eb3abdcf4d4c2a208b40fb8f466
+        domain: climate
+        entity_id: target_hvac
+        type: set_hvac_mode
+        hvac_mode: auto
+    {% endif %}
+mode: single
